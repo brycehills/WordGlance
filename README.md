@@ -16,11 +16,11 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/01-profile.png" width="18%" alt="Profile screen showing study rhythm">
-  <img src="docs/screenshots/02-collection.png" width="18%" alt="Collection screen showing an N3 deck">
-  <img src="docs/screenshots/03-today.png" width="18%" alt="Today screen showing the current word">
-  <img src="docs/screenshots/04-word-review.png" width="18%" alt="Word review screen">
-  <img src="docs/screenshots/05-lock-screen-widget.jpg" width="18%" alt="WordGlance on the Lock Screen">
+  <img src="docs/screenshots/05-lock-screen-widget.jpg" width="31%" alt="WordGlance on the Lock Screen">
+  <img src="docs/screenshots/03-today.png" width="16%" alt="Today screen showing the current word">
+  <img src="docs/screenshots/04-word-review.png" width="16%" alt="Word review screen">
+  <img src="docs/screenshots/02-collection.png" width="16%" alt="Collection screen showing an N3 deck">
+  <img src="docs/screenshots/01-profile.png" width="16%" alt="Profile screen showing study rhythm">
 </p>
 
 ## Learn in the margins of your day
@@ -41,37 +41,37 @@ The goal is simple: make vocabulary visible often enough that it sticks—withou
 
 ## Product tour
 
-Screenshots are shown in the intended order: Profile, Collection, Today, Word Review, then Lock Screen.
+The Lock Screen is the heart of WordGlance. The app exists to bring a useful Japanese word into the moments between everything else.
 
-### 1. Profile — make consistency visible
+### 1. Lock Screen — let Japanese find you
 
-<img src="docs/screenshots/01-profile.png" width="300" alt="Profile showing streak, daily practices, and four-week activity graph">
+<img src="docs/screenshots/05-lock-screen-widget.jpg" width="300" alt="WordGlance Japanese word shown on an iPhone Lock Screen">
 
-Profile frames progress as a rhythm rather than a score. A four-week activity view, current streak, and today’s practices make it easy to notice the habit taking shape.
+The Lock Screen widget places the kanji, reading, and a compact definition beside the time—so a study moment can happen without opening an app.
 
-### 2. Collection — browse your current deck
-
-<img src="docs/screenshots/02-collection.png" width="300" alt="Collection screen with Japanese vocabulary list">
-
-Collection keeps your selected JLPT deck within reach. Browse every available word, then open any card for a closer review.
-
-### 3. Today — meet the current word
+### 2. Today — meet the current word
 
 <img src="docs/screenshots/03-today.png" width="300" alt="Today screen with word card and next-word countdown">
 
 Today centers the active word, its reading, and a live countdown to the next one. The card invites recall before showing the answer.
 
-### 4. Word Review — reveal meaning in context
+### 3. Word Review — reveal meaning in context
 
 <img src="docs/screenshots/04-word-review.png" width="300" alt="Word review card with meaning and example sentence">
 
 Review reveals the definition only when you choose, then adds a Japanese example and English translation for context.
 
-### 5. Lock Screen — let Japanese find you
+### 4. Collection — browse your current deck
 
-<img src="docs/screenshots/05-lock-screen-widget.jpg" width="300" alt="WordGlance Japanese word shown on an iPhone Lock Screen">
+<img src="docs/screenshots/02-collection.png" width="300" alt="Collection screen with Japanese vocabulary list">
 
-The Lock Screen widget places the kanji, reading, and a compact definition beside the time—so a study moment can happen without opening an app.
+Collection keeps your selected JLPT deck within reach. Browse every available word, then open any card for a closer review.
+
+### 5. Profile — make consistency visible
+
+<img src="docs/screenshots/01-profile.png" width="300" alt="Profile showing streak, daily practices, and four-week activity graph">
+
+Profile frames progress as a rhythm rather than a score. A four-week activity view, current streak, and today’s practices make it easy to notice the habit taking shape.
 
 ## Vocabulary coverage
 
