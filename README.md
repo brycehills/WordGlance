@@ -19,7 +19,7 @@
   <img src="docs/screenshots/wordglance-tour.gif" width="300" alt="Animated WordGlance tour: Lock Screen, Today, Word Review, Collection, and Profile">
 </p>
 
-<p align="center"><sub>Lock Screen · Today · Review · Collection · Profile</sub></p>
+<p align="center"><sub>Lock Screen · Today · Review · Collection · Profile · Study Settings</sub></p>
 
 ## Learn in the margins of your day
 
@@ -70,6 +70,12 @@ Collection keeps your selected JLPT deck within reach. Browse every available wo
 <img src="docs/screenshots/01-profile.png" width="300" alt="Profile showing streak, daily practices, and four-week activity graph">
 
 Profile frames progress as a rhythm rather than a score. A four-week activity view, current streak, and today’s practices make it easy to notice the habit taking shape.
+
+### 6. Study Settings — make the habit yours
+
+<img src="docs/screenshots/06-study-settings.png" width="300" alt="Study Settings screen for JLPT deck, new-word pace, and active study hours">
+
+Change your JLPT deck, choose a new-word pace from every 30 minutes to once daily, and set the hours when new words should arrive—all without restarting setup.
 
 ## Vocabulary coverage
 
