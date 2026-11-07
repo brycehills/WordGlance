@@ -37,46 +37,6 @@ The goal is simple: make vocabulary visible often enough that it sticks—withou
 | **Recall before revealing** | Review cards keep the meaning hidden until you are ready. Practice mode uses randomized, non-repeating multiple-choice distractors. |
 | **A visible learning rhythm** | Track practice activity, daily momentum, and your current streak in Profile. |
 
-## Product tour
-
-The Lock Screen is the heart of WordGlance. The app exists to bring a useful Japanese word into the moments between everything else.
-
-### 1. Lock Screen — let Japanese find you
-
-<img src="docs/screenshots/05-lock-screen-widget.jpg" width="300" alt="WordGlance Japanese word shown on an iPhone Lock Screen">
-
-The Lock Screen widget places the kanji, reading, and a compact definition beside the time—so a study moment can happen without opening an app.
-
-### 2. Today — meet the current word
-
-<img src="docs/screenshots/03-today.png" width="300" alt="Today screen with word card and next-word countdown">
-
-Today centers the active word, its reading, and a live countdown to the next one. The card invites recall before showing the answer.
-
-### 3. Word Review — reveal meaning in context
-
-<img src="docs/screenshots/04-word-review.png" width="300" alt="Word review card with meaning and example sentence">
-
-Review reveals the definition only when you choose, then adds a Japanese example and English translation for context.
-
-### 4. Collection — browse your current deck
-
-<img src="docs/screenshots/02-collection.png" width="300" alt="Collection screen with Japanese vocabulary list">
-
-Collection keeps your selected JLPT deck within reach. Browse every available word, then open any card for a closer review.
-
-### 5. Profile — make consistency visible
-
-<img src="docs/screenshots/01-profile.png" width="300" alt="Profile showing streak, daily practices, and four-week activity graph">
-
-Profile frames progress as a rhythm rather than a score. A four-week activity view, current streak, and today’s practices make it easy to notice the habit taking shape.
-
-### 6. Study Settings — make the habit yours
-
-<img src="docs/screenshots/06-study-settings.png" width="300" alt="Study Settings screen for JLPT deck, new-word pace, and active study hours">
-
-Change your JLPT deck, choose a new-word pace from every 30 minutes to once daily, and set the hours when new words should arrive—all without restarting setup.
-
 ## Vocabulary coverage
 
 WordGlance currently includes **500 curated starter entries**:
