@@ -16,12 +16,10 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/05-lock-screen-widget.jpg" width="31%" alt="WordGlance on the Lock Screen">
-  <img src="docs/screenshots/03-today.png" width="16%" alt="Today screen showing the current word">
-  <img src="docs/screenshots/04-word-review.png" width="16%" alt="Word review screen">
-  <img src="docs/screenshots/02-collection.png" width="16%" alt="Collection screen showing an N3 deck">
-  <img src="docs/screenshots/01-profile.png" width="16%" alt="Profile screen showing study rhythm">
+  <img src="docs/screenshots/wordglance-tour.gif" width="300" alt="Animated WordGlance tour: Lock Screen, Today, Word Review, Collection, and Profile">
 </p>
+
+<p align="center"><sub>Lock Screen · Today · Review · Collection · Profile</sub></p>
 
 ## Learn in the margins of your day
 
