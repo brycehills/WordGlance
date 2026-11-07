@@ -11,8 +11,12 @@ struct Provider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<WordEntry>) -> Void) {
         let calendar = Calendar.current
         let now = Date()
-        let nextHour = calendar.nextDate(after: now, matching: DateComponents(minute: 0, second: 0), matchingPolicy: .nextTime) ?? now
-        let dates = [now] + (0..<12).compactMap { calendar.date(byAdding: .hour, value: $0, to: nextHour) }
+        let savedFrequency = SharedStudySettings.defaults.object(forKey: "frequency") as? Int ?? 60
+        let interval = JapaneseWordBank.intervalMinutes(for: savedFrequency)
+        let nextChange = JapaneseWordBank.nextWordDate(after: now, frequency: savedFrequency)
+        let dates = [now] + (0..<12).compactMap {
+            calendar.date(byAdding: .minute, value: $0 * interval, to: nextChange)
+        }
         let entries = dates.map { date -> WordEntry in
             word(for: date)
         }

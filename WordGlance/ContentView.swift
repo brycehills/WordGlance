@@ -29,7 +29,7 @@ private struct OnboardingView: View {
     @State private var language = "Japanese"
     @State private var goal = "Travel"
     @State private var level = "N5"
-    @State private var frequency = 1
+    @State private var frequency = 60
     @State private var startHour = 9
     @State private var endHour = 17
     @State private var remindersOn = false
@@ -37,7 +37,13 @@ private struct OnboardingView: View {
     private let languages = ["Japanese", "English"]
     private let goals = ["Travel", "Conversation", "Career", "School", "Just curious"]
     private let levels = ["N5", "N4", "N3", "N2", "N1"]
-    private let frequencyNames = ["Every hour", "Every 2 hours", "Every 4 hours", "Once daily"]
+    private let frequencyOptions = [
+        (minutes: 30, title: "Every 30 minutes"),
+        (minutes: 60, title: "Every hour"),
+        (minutes: 120, title: "Every 2 hours"),
+        (minutes: 240, title: "Every 4 hours"),
+        (minutes: 1_440, title: "Once daily")
+    ]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -57,7 +63,7 @@ private struct OnboardingView: View {
                 ChoicePage(title: "What language is calling you?", subtitle: "Start with one. You can add others later.", choices: languages, selection: $language).tag(1)
                 ChoicePage(title: "What’s your reason?", subtitle: "A small goal makes a daily habit easier to keep.", choices: goals, selection: $goal).tag(2)
                 ChoicePage(title: "Where are you starting?", subtitle: "Choose what feels useful, not perfect.", choices: levels, selection: $level).tag(3)
-                FrequencyPage(frequency: $frequency, labels: frequencyNames).tag(4)
+                FrequencyPage(frequency: $frequency, options: frequencyOptions).tag(4)
                 QuietHoursPage(startHour: $startHour, endHour: $endHour).tag(5)
                 NotificationsPage(remindersOn: $remindersOn).tag(6)
             }
@@ -118,16 +124,28 @@ private struct ChoicePage: View {
 }
 
 private struct FrequencyPage: View {
-    @Binding var frequency: Int; let labels: [String]
+    @Binding var frequency: Int
+    let options: [(minutes: Int, title: String)]
+
+    private var selectedTitle: String {
+        options.first(where: { $0.minutes == frequency })?.title ?? "Every hour"
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("How often should a word find you?").font(.largeTitle.bold())
             Text("Choose a pace that feels pleasantly noticeable—not noisy.").font(.title3).foregroundStyle(.secondary)
             Spacer()
             Image(systemName: "clock.badge.checkmark").font(.system(size: 76)).foregroundStyle(.indigo).frame(maxWidth: .infinity)
-            Text(labels[frequency]).font(.system(size: 34, weight: .bold, design: .rounded)).frame(maxWidth: .infinity)
-            Picker("Word frequency", selection: $frequency) { ForEach(labels.indices, id: \.self) { Text(labels[$0]).tag($0) } }.pickerStyle(.segmented)
-            Text(frequency == 0 ? "A new word at the top of each active hour." : "Words arrive during your active hours.").font(.subheadline).foregroundStyle(.secondary).frame(maxWidth: .infinity)
+            Text(selectedTitle).font(.system(size: 34, weight: .bold, design: .rounded)).frame(maxWidth: .infinity)
+            Picker("Word frequency", selection: $frequency) {
+                ForEach(options, id: \.minutes) { option in
+                    Text(option.title).tag(option.minutes)
+                }
+            }
+            .pickerStyle(.menu)
+            .frame(maxWidth: .infinity)
+            Text(frequency == 30 ? "A fresh word twice an hour during your active hours." : "Words arrive during your active hours.").font(.subheadline).foregroundStyle(.secondary).frame(maxWidth: .infinity)
             Spacer()
         }.padding(30)
     }
@@ -198,6 +216,7 @@ private struct TodayView: View {
     @Binding var showsReview: Bool
     @AppStorage("language", store: SharedStudySettings.defaults) private var language = "Japanese"
     @AppStorage("level", store: SharedStudySettings.defaults) private var level = "N5"
+    @AppStorage("frequency", store: SharedStudySettings.defaults) private var frequency = 60
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var showsResetConfirmation = false
     private var currentJapaneseWord: StudyWord { JapaneseWordBank.word(for: level) }
@@ -211,6 +230,21 @@ private struct TodayView: View {
                         .onLongPressGesture { showsResetConfirmation = true }
                     Text(language == "Japanese" ? "Your \(level) word is ready." : "English is coming soon.").font(.largeTitle.bold())
                     if language == "Japanese" {
+                        TimelineView(.periodic(from: .now, by: 1)) { timeline in
+                            let nextWord = JapaneseWordBank.nextWordDate(after: timeline.date, frequency: frequency)
+                            HStack(spacing: 8) {
+                                Label("Next word in", systemImage: "clock")
+                                Spacer()
+                                Text(nextWord, style: .timer)
+                                    .fontWeight(.semibold)
+                                    .monospacedDigit()
+                            }
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 11)
+                            .background(Color(uiColor: .secondarySystemGroupedBackground), in: Capsule())
+                        }
                         Text("TODAY'S WORD")
                             .font(.caption.weight(.bold)).tracking(1.4).foregroundStyle(.indigo)
                             .padding(.top, 4)
@@ -279,45 +313,51 @@ private struct TodayView: View {
 
 private struct PracticeView: View {
     @AppStorage("level", store: SharedStudySettings.defaults) private var level = "N5"
-    @State private var questionOffset = 1
+    @State private var question: PracticeQuestion?
     @State private var selectedAnswer: String?
-
-    private var word: StudyWord {
-        let deck = JapaneseWordBank.words(for: level)
-        let day = Calendar.current.ordinality(of: .day, in: .year, for: .now) ?? 0
-        let hour = Calendar.current.component(.hour, from: .now)
-        return deck[(day * 24 + hour + questionOffset) % deck.count]
-    }
-
-    private var choices: [String] {
-        let distractors = JapaneseWordBank.words(for: level)
-            .filter { $0.id != word.id && $0.meaning != word.meaning }
-            .prefix(3)
-            .map(\.meaning)
-        return (distractors + [word.meaning]).sorted()
-    }
+    @State private var usedQuestionIDs: [String] = []
+    @State private var recentDistractorIDs: [String] = []
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 22) {
+                if let question {
+                    questionView(question)
+                } else {
+                    ProgressView("Preparing a question…")
+                        .frame(maxWidth: .infinity, minHeight: 360)
+                }
+            }
+            .onAppear {
+                if question == nil { nextQuestion(reset: true) }
+            }
+            .onChange(of: level) { _, _ in
+                nextQuestion(reset: true)
+            }
+            .navigationTitle("Practice")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+
+    private func questionView(_ question: PracticeQuestion) -> some View {
+        VStack(alignment: .leading, spacing: 22) {
                     Text("PRACTICE").font(.caption.weight(.bold)).tracking(1.8).foregroundStyle(.indigo)
                     Text("Test your recall.").font(.largeTitle.bold())
                     Text("No definition until after you choose.").font(.body).foregroundStyle(.secondary)
 
                     VStack(spacing: 10) {
-                        Text(word.kanji)
+                        Text(question.word.kanji)
                             .font(.system(size: 66, weight: .bold, design: .rounded))
                             .minimumScaleFactor(0.55).lineLimit(1)
-                        Text(word.kana).font(.title2.weight(.bold)).foregroundStyle(.indigo)
-                        Text(word.romaji).foregroundStyle(.secondary)
+                        Text(question.word.kana).font(.title2.weight(.bold)).foregroundStyle(.indigo)
+                        Text(question.word.romaji).foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 34)
                     .background(Color.indigo.opacity(0.10), in: RoundedRectangle(cornerRadius: 26))
 
                     Text("What does this mean?").font(.title3.weight(.bold))
-                    ForEach(choices, id: \.self) { choice in
+                    ForEach(question.choices, id: \.self) { choice in
                         Button {
                             selectedAnswer = choice
                             StudyProgress.recordPractice()
@@ -337,36 +377,63 @@ private struct PracticeView: View {
 
                     if let selectedAnswer {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text(selectedAnswer == word.meaning ? "Correct" : "The answer")
+                            Text(selectedAnswer == question.word.meaning ? "Correct" : "The answer")
                                 .font(.headline.weight(.bold))
-                                .foregroundStyle(selectedAnswer == word.meaning ? .green : .orange)
-                            Text(word.meaning).font(.title3.weight(.bold))
-                            if !word.exampleJapanese.isEmpty {
-                                Text(word.exampleJapanese).font(.subheadline)
-                                Text(word.exampleEnglish).font(.footnote).foregroundStyle(.secondary)
+                                .foregroundStyle(selectedAnswer == question.word.meaning ? .green : .orange)
+                            Text(question.word.meaning).font(.title3.weight(.bold))
+                            if !question.word.exampleJapanese.isEmpty {
+                                Text(question.word.exampleJapanese).font(.subheadline)
+                                Text(question.word.exampleEnglish).font(.footnote).foregroundStyle(.secondary)
                             }
                         }
                         .padding(18)
                         .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 18))
                         Button("Next question") {
-                            questionOffset += 1
-                            self.selectedAnswer = nil
+                            nextQuestion()
                         }
                         .buttonStyle(.borderedProminent).tint(.indigo)
                         .frame(maxWidth: .infinity)
                     }
-                }
-                .padding(24)
-            }
-            .navigationTitle("Practice")
-            .navigationBarTitleDisplayMode(.inline)
+        }
+        .padding(24)
+    }
+
+    private func nextQuestion(reset: Bool = false) {
+        let deck = JapaneseWordBank.words(for: level)
+        guard !deck.isEmpty else { return }
+
+        let previousQuestionIDs = reset ? [] : usedQuestionIDs
+        let availableQuestions = deck.filter { !previousQuestionIDs.contains($0.id) }
+        let nextWord = (availableQuestions.isEmpty ? deck : availableQuestions).randomElement()!
+
+        let allDistractors = deck.filter { $0.id != nextWord.id && $0.meaning != nextWord.meaning }
+        let freshDistractors = allDistractors.filter { !recentDistractorIDs.contains($0.id) }
+        var distractors = threeDistinctMeanings(from: freshDistractors)
+        if distractors.count < 3 {
+            let existingMeanings = Set(distractors.map(\.meaning))
+            distractors += threeDistinctMeanings(from: allDistractors.filter { !existingMeanings.contains($0.meaning) }, limit: 3 - distractors.count)
+        }
+
+        question = PracticeQuestion(
+            word: nextWord,
+            choices: (distractors.map(\.meaning) + [nextWord.meaning]).shuffled()
+        )
+        usedQuestionIDs = Array((previousQuestionIDs + [nextWord.id]).suffix(20))
+        recentDistractorIDs = Array((recentDistractorIDs + distractors.map(\.id)).suffix(12))
+        selectedAnswer = nil
+    }
+
+    private func threeDistinctMeanings(from words: [StudyWord], limit: Int = 3) -> [StudyWord] {
+        words.shuffled().reduce(into: []) { selected, candidate in
+            guard selected.count < limit, !selected.contains(where: { $0.meaning == candidate.meaning }) else { return }
+            selected.append(candidate)
         }
     }
 
     @ViewBuilder private func answerIcon(for choice: String) -> some View {
         if let selectedAnswer {
-            Image(systemName: choice == word.meaning ? "checkmark.circle.fill" : (choice == selectedAnswer ? "xmark.circle.fill" : "circle"))
-                .foregroundStyle(choice == word.meaning ? .green : (choice == selectedAnswer ? .red : .secondary))
+            Image(systemName: choice == question?.word.meaning ? "checkmark.circle.fill" : (choice == selectedAnswer ? "xmark.circle.fill" : "circle"))
+                .foregroundStyle(choice == question?.word.meaning ? .green : (choice == selectedAnswer ? .red : .secondary))
         } else {
             Image(systemName: "circle").foregroundStyle(.secondary)
         }
@@ -374,10 +441,15 @@ private struct PracticeView: View {
 
     private func answerBackground(for choice: String) -> Color {
         guard let selectedAnswer else { return Color(uiColor: .secondarySystemGroupedBackground) }
-        if choice == word.meaning { return .green.opacity(0.14) }
+        if choice == question?.word.meaning { return .green.opacity(0.14) }
         if choice == selectedAnswer { return .red.opacity(0.14) }
         return Color(uiColor: .secondarySystemGroupedBackground)
     }
+}
+
+private struct PracticeQuestion {
+    let word: StudyWord
+    let choices: [String]
 }
 
 private struct CollectionView: View {
