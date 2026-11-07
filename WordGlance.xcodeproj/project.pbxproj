@@ -6,14 +6,66 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		1F159C02309E895100A99377 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F159C01309E895100A99377 /* WidgetKit.framework */; };
+		1F159C04309E895100A99377 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F159C03309E895100A99377 /* SwiftUI.framework */; };
+		1F159C15309E895300A99377 /* WordGlanceWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1F159BFF309E895100A99377 /* WordGlanceWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1F159C13309E895300A99377 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1F159BE5309E881500A99377 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1F159BFE309E895100A99377;
+			remoteInfo = WordGlanceWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1F159C1A309E895300A99377 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				1F159C15309E895300A99377 /* WordGlanceWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		1F159BED309E881500A99377 /* WordGlance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WordGlance.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1F159BFF309E895100A99377 /* WordGlanceWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WordGlanceWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		1F159C01309E895100A99377 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		1F159C03309E895100A99377 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		1FBC2341309E9D35000E8FD9 /* WordGlanceWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WordGlanceWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		1F159C16309E895300A99377 /* Exceptions for "WordGlanceWidget" folder in "WordGlanceWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 1F159BFE309E895100A99377 /* WordGlanceWidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		1F159BEF309E881500A99377 /* WordGlance */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = WordGlance;
+			sourceTree = "<group>";
+		};
+		1F159C05309E895100A99377 /* WordGlanceWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				1F159C16309E895300A99377 /* Exceptions for "WordGlanceWidget" folder in "WordGlanceWidgetExtension" target */,
+			);
+			path = WordGlanceWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -26,13 +78,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1F159BFC309E895100A99377 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1F159C04309E895100A99377 /* SwiftUI.framework in Frameworks */,
+				1F159C02309E895100A99377 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		1F159BE4309E881500A99377 = {
 			isa = PBXGroup;
 			children = (
+				1FBC2341309E9D35000E8FD9 /* WordGlanceWidgetExtension.entitlements */,
 				1F159BEF309E881500A99377 /* WordGlance */,
+				1F159C05309E895100A99377 /* WordGlanceWidget */,
+				1F159C00309E895100A99377 /* Frameworks */,
 				1F159BEE309E881500A99377 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,8 +105,18 @@
 			isa = PBXGroup;
 			children = (
 				1F159BED309E881500A99377 /* WordGlance.app */,
+				1F159BFF309E895100A99377 /* WordGlanceWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		1F159C00309E895100A99377 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1F159C01309E895100A99377 /* WidgetKit.framework */,
+				1F159C03309E895100A99377 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -55,10 +129,12 @@
 				1F159BE9309E881500A99377 /* Sources */,
 				1F159BEA309E881500A99377 /* Frameworks */,
 				1F159BEB309E881500A99377 /* Resources */,
+				1F159C1A309E895300A99377 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				1F159C14309E895300A99377 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				1F159BEF309E881500A99377 /* WordGlance */,
@@ -69,6 +145,28 @@
 			productName = WordGlance;
 			productReference = 1F159BED309E881500A99377 /* WordGlance.app */;
 			productType = "com.apple.product-type.application";
+		};
+		1F159BFE309E895100A99377 /* WordGlanceWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1F159C17309E895300A99377 /* Build configuration list for PBXNativeTarget "WordGlanceWidgetExtension" */;
+			buildPhases = (
+				1F159BFB309E895100A99377 /* Sources */,
+				1F159BFC309E895100A99377 /* Frameworks */,
+				1F159BFD309E895100A99377 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				1F159C05309E895100A99377 /* WordGlanceWidget */,
+			);
+			name = WordGlanceWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = WordGlanceWidgetExtension;
+			productReference = 1F159BFF309E895100A99377 /* WordGlanceWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -81,6 +179,9 @@
 				LastUpgradeCheck = 2630;
 				TargetAttributes = {
 					1F159BEC309E881500A99377 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					1F159BFE309E895100A99377 = {
 						CreatedOnToolsVersion = 26.3;
 					};
 				};
@@ -100,12 +201,20 @@
 			projectRoot = "";
 			targets = (
 				1F159BEC309E881500A99377 /* WordGlance */,
+				1F159BFE309E895100A99377 /* WordGlanceWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		1F159BEB309E881500A99377 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1F159BFD309E895100A99377 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +231,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1F159BFB309E895100A99377 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1F159C14309E895300A99377 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1F159BFE309E895100A99377 /* WordGlanceWidgetExtension */;
+			targetProxy = 1F159C13309E895300A99377 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1F159BF6309E881700A99377 /* Debug */ = {
@@ -249,10 +373,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = WordGlance/WordGlance.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 77H6C786C6;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = WordGlance-Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -280,10 +407,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = WordGlance/WordGlance.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 77H6C786C6;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = WordGlance-Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -299,6 +429,68 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		1F159C18309E895300A99377 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = WordGlanceWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 77H6C786C6;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WordGlanceWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WordGlanceWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brycehills.WordGlance.WordGlanceWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		1F159C19309E895300A99377 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = WordGlanceWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 77H6C786C6;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WordGlanceWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WordGlanceWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brycehills.WordGlance.WordGlanceWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -323,6 +515,15 @@
 			buildConfigurations = (
 				1F159BF9309E881700A99377 /* Debug */,
 				1F159BFA309E881700A99377 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1F159C17309E895300A99377 /* Build configuration list for PBXNativeTarget "WordGlanceWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1F159C18309E895300A99377 /* Debug */,
+				1F159C19309E895300A99377 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
