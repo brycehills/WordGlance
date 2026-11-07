@@ -542,25 +542,60 @@ enum JapaneseWordBank {
         }
     }
 
-    static func nextWordDate(after date: Date = .now, frequency: Int? = nil) -> Date {
+    static func nextWordDate(after date: Date = .now, frequency: Int? = nil, startHour: Int? = nil, endHour: Int? = nil) -> Date {
         let calendar = Calendar.current
         let savedFrequency = frequency ?? (SharedStudySettings.defaults.object(forKey: "frequency") as? Int ?? 60)
         let interval = intervalMinutes(for: savedFrequency)
         let dayStart = calendar.startOfDay(for: date)
-        let elapsedMinutes = calendar.dateComponents([.minute], from: dayStart, to: date).minute ?? 0
+        let start = startHour ?? (SharedStudySettings.defaults.object(forKey: "startHour") as? Int ?? 9)
+        let end = endHour ?? (SharedStudySettings.defaults.object(forKey: "endHour") as? Int ?? 17)
+        let activeStart = calendar.date(byAdding: .hour, value: start, to: dayStart) ?? date
+        let activeEnd = calendar.date(byAdding: .hour, value: end, to: dayStart) ?? date
+
+        if date < activeStart { return activeStart }
+        if date >= activeEnd {
+            let tomorrow = calendar.date(byAdding: .day, value: 1, to: dayStart) ?? dayStart
+            return calendar.date(byAdding: .hour, value: start, to: tomorrow) ?? date
+        }
+
+        let elapsedMinutes = calendar.dateComponents([.minute], from: activeStart, to: date).minute ?? 0
         let nextChangeMinute = ((elapsedMinutes / interval) + 1) * interval
-        return calendar.date(byAdding: .minute, value: nextChangeMinute, to: dayStart) ?? date
+        if let next = calendar.date(byAdding: .minute, value: nextChangeMinute, to: activeStart), next < activeEnd {
+            return next
+        }
+
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: dayStart) ?? dayStart
+        return calendar.date(byAdding: .hour, value: start, to: tomorrow) ?? date
     }
 
-    static func word(for level: String, at date: Date = .now, frequency: Int? = nil) -> StudyWord {
+    static func word(for level: String, at date: Date = .now, frequency: Int? = nil, startHour: Int? = nil, endHour: Int? = nil) -> StudyWord {
         let deck = words(for: level)
-        let day = Calendar.current.ordinality(of: .day, in: .year, for: date) ?? 0
-        let hour = Calendar.current.component(.hour, from: date)
+        let calendar = Calendar.current
         let minute = Calendar.current.component(.minute, from: date)
         let savedFrequency = frequency ?? (SharedStudySettings.defaults.object(forKey: "frequency") as? Int ?? 60)
         let interval = intervalMinutes(for: savedFrequency)
-        let minutesSinceStartOfYear = (day * 24 * 60) + (hour * 60) + minute
-        return deck[(minutesSinceStartOfYear / interval) % deck.count]
+        let start = startHour ?? (SharedStudySettings.defaults.object(forKey: "startHour") as? Int ?? 9)
+        let end = endHour ?? (SharedStudySettings.defaults.object(forKey: "endHour") as? Int ?? 17)
+        let activeMinutes = max(1, (end - start) * 60)
+        let slotsPerDay = max(1, (activeMinutes + interval - 1) / interval)
+        let dayStart = calendar.startOfDay(for: date)
+        let activeStart = calendar.date(byAdding: .hour, value: start, to: dayStart) ?? date
+        let activeEnd = calendar.date(byAdding: .hour, value: end, to: dayStart) ?? date
+        var wordDate = date
+        var slot = 0
+
+        if date < activeStart {
+            wordDate = calendar.date(byAdding: .day, value: -1, to: dayStart) ?? dayStart
+            slot = slotsPerDay - 1
+        } else if date >= activeEnd {
+            slot = slotsPerDay - 1
+        } else {
+            let elapsedMinutes = max(0, calendar.dateComponents([.minute], from: activeStart, to: date).minute ?? minute)
+            slot = min(slotsPerDay - 1, elapsedMinutes / interval)
+        }
+
+        let day = calendar.ordinality(of: .day, in: .year, for: wordDate) ?? 0
+        return deck[((day * slotsPerDay) + slot) % deck.count]
     }
 }
 

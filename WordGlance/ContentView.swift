@@ -485,6 +485,11 @@ private struct CollectionView: View {
 
 private struct ProfileView: View {
     @State private var snapshot = StudyProgress.snapshot()
+    @AppStorage("level", store: SharedStudySettings.defaults) private var level = "N5"
+    @AppStorage("frequency", store: SharedStudySettings.defaults) private var frequency = 60
+    @AppStorage("startHour", store: SharedStudySettings.defaults) private var startHour = 9
+    @AppStorage("endHour", store: SharedStudySettings.defaults) private var endHour = 17
+    @State private var showsSettings = false
 
     private var dots: [Bool] {
         let calendar = Calendar.current
@@ -521,13 +526,50 @@ private struct ProfileView: View {
 
                     Text("A day lights up when you answer a Practice question. Keep the habit gentle and consistent.")
                         .font(.subheadline).foregroundStyle(.secondary)
+
+                    Button { showsSettings = true } label: {
+                        HStack(spacing: 14) {
+                            Image(systemName: "slider.horizontal.3")
+                                .font(.title3.weight(.semibold))
+                                .foregroundStyle(.indigo)
+                                .frame(width: 34, height: 34)
+                                .background(Color.indigo.opacity(0.12), in: Circle())
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("Study settings").font(.headline)
+                                Text("\(level) · \(frequencyLabel) · \(time(startHour))–\(time(endHour))")
+                                    .font(.subheadline).foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(.secondary)
+                        }
+                        .padding(18)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20))
+                    }
+                    .buttonStyle(.plain)
                 }
                 .padding(24)
             }
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear { snapshot = StudyProgress.snapshot() }
+            .sheet(isPresented: $showsSettings) { StudySettingsView() }
         }
+    }
+
+    private var frequencyLabel: String {
+        switch JapaneseWordBank.intervalMinutes(for: frequency) {
+        case 30: return "Every 30 min"
+        case 60: return "Hourly"
+        case 120: return "Every 2 hours"
+        case 240: return "Every 4 hours"
+        default: return "Daily"
+        }
+    }
+
+    private func time(_ hour: Int) -> String {
+        (Calendar.current.date(bySettingHour: hour, minute: 0, second: 0, of: .now) ?? .now)
+            .formatted(date: .omitted, time: .shortened)
     }
 
     private func stat(title: String, value: String, detail: String) -> some View {
@@ -539,6 +581,96 @@ private struct ProfileView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(18)
         .background(Color.indigo.opacity(0.10), in: RoundedRectangle(cornerRadius: 20))
+    }
+}
+
+private struct StudySettingsView: View {
+    @Environment(\.dismiss) private var dismiss
+    @AppStorage("level", store: SharedStudySettings.defaults) private var level = "N5"
+    @AppStorage("frequency", store: SharedStudySettings.defaults) private var frequency = 60
+    @AppStorage("startHour", store: SharedStudySettings.defaults) private var startHour = 9
+    @AppStorage("endHour", store: SharedStudySettings.defaults) private var endHour = 17
+
+    private let frequencyOptions = [
+        (minutes: 30, title: "Every 30 minutes"),
+        (minutes: 60, title: "Every hour"),
+        (minutes: 120, title: "Every 2 hours"),
+        (minutes: 240, title: "Every 4 hours"),
+        (minutes: 1_440, title: "Once daily")
+    ]
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Your deck") {
+                    Picker("JLPT level", selection: $level) {
+                        ForEach(["N5", "N4", "N3", "N2", "N1"], id: \.self) { level in
+                            Text("JLPT \(level)").tag(level)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    Text("Your widget, Today card, Collection, and Practice questions will use this deck.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+
+                Section("New-word pace") {
+                    Picker("Frequency", selection: $frequency) {
+                        ForEach(frequencyOptions, id: \.minutes) { option in
+                            Text(option.title).tag(option.minutes)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                }
+
+                Section("Active study hours") {
+                    Picker("From", selection: $startHour) {
+                        ForEach(5...max(5, endHour - 1), id: \.self) { hour in
+                            Text(time(hour)).tag(hour)
+                        }
+                    }
+                    Picker("Until", selection: $endHour) {
+                        ForEach(min(23, startHour + 1)...23, id: \.self) { hour in
+                            Text(time(hour)).tag(hour)
+                        }
+                    }
+                    Text("New words arrive only between \(time(startHour)) and \(time(endHour)). Outside this window, the last word stays in view until the next session.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .navigationTitle("Study settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+            .onAppear {
+                frequency = JapaneseWordBank.intervalMinutes(for: frequency)
+                startHour = min(max(startHour, 5), 18)
+                endHour = min(max(endHour, startHour + 1), 23)
+            }
+            .onChange(of: level) { _, _ in reloadWidget() }
+            .onChange(of: frequency) { _, _ in reloadWidget() }
+            .onChange(of: startHour) { _, newStart in
+                if endHour <= newStart { endHour = min(23, newStart + 1) }
+                reloadWidget()
+            }
+            .onChange(of: endHour) { _, newEnd in
+                if startHour >= newEnd { startHour = max(5, newEnd - 1) }
+                reloadWidget()
+            }
+        }
+    }
+
+    private func reloadWidget() {
+        WidgetCenter.shared.reloadTimelines(ofKind: "WordGlanceWidget")
+    }
+
+    private func time(_ hour: Int) -> String {
+        (Calendar.current.date(bySettingHour: hour, minute: 0, second: 0, of: .now) ?? .now)
+            .formatted(date: .omitted, time: .shortened)
     }
 }
 
